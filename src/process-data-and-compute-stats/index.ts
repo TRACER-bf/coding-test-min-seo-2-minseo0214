@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable, filter, reduce } from "rxjs";
 
 interface Data {
   value: number;
@@ -10,7 +10,26 @@ interface Stats {
   categoryCounts: Record<string, number>;
 }
 
-export function processDataAndComputeStats(input: Observable<Data>): Observable<Stats> {
-  // TODO: 여기에 코드를 작성하세요.
-  return new Observable(); // 타입 에러를 막기 위해서 만들어진 코드입니다.
+const CATEGORY_TO_PROCESS = ["A", "B"];
+
+export function processDataAndComputeStats(
+  input: Observable<Data>
+): Observable<Stats> {
+  return input.pipe(
+    filter((data) => CATEGORY_TO_PROCESS.includes(data.category)),
+    reduce(
+      (acc, curr) => {
+        const categoryCounts = {
+          ...acc.categoryCounts,
+          [curr.category]: (acc.categoryCounts[curr.category] || 0) + 1,
+        };
+
+        return {
+          totalSum: acc.totalSum + curr.value,
+          categoryCounts,
+        };
+      },
+      { totalSum: 0, categoryCounts: {} } as Stats
+    )
+  );
 }

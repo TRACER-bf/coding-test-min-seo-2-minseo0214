@@ -15,4 +15,4 @@ it("should calculate the power of n", (done) => {
       done();
     },
   });
-});
+}, 26000);

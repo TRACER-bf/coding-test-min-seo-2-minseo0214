@@ -1,6 +1,10 @@
-import { Observable } from "rxjs";
+import { Observable, first, scan } from "rxjs";
 
-export function collectSpecificData(input: Observable<number>): Observable<number[]> {
-  // TODO: 여기에 코드를 작성하세요.
-  return new Observable(); // 타입 에러를 막기 위해서 만들어진 코드입니다.
+export function collectSpecificData(
+  input: Observable<number>
+): Observable<number[]> {
+  return input.pipe(
+    scan((acc, cur) => (cur % 2 === 0 && cur > 5 ? [...acc, cur] : acc), []),
+    first((arr) => arr.length === 3)
+  );
 }
