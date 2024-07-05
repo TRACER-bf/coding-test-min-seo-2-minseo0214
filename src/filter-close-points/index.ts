@@ -1,6 +1,20 @@
-import { Observable } from "rxjs";
+import { Observable, distinctUntilChanged } from "rxjs";
 
-export function filterClosePoints(input: Observable<{ x: number, y: number }>): Observable<{ x: number, y: number }> {
-  // TODO: 여기에 코드를 작성하세요.
-  return new Observable(); // 타입 에러를 막기 위해서 만들어진 코드입니다.
+interface Point {
+  x: number;
+  y: number;
+}
+
+function getUclidianDistance(point1: Point, point2: Point): number {
+  return Math.sqrt(
+    Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2)
+  );
+}
+
+export function filterClosePoints(
+  input: Observable<{ x: number; y: number }>
+): Observable<{ x: number; y: number }> {
+  return input.pipe(
+    distinctUntilChanged((prev, cur) => getUclidianDistance(prev, cur) < 1)
+  );
 }
